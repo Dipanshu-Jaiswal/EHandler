@@ -1,21 +1,43 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
 
 const CreatePassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { updateSignupData } = useAuth();
+
+  const validatePassword = () => {
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long');
+      return false;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = () => {
+    if (validatePassword()) {
+      updateSignupData({ password });
+      navigate('/PhoneVerification');
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[#202124] flex items-center justify-center">
-      <div className="bg-[#1E1E1E] p-8 rounded-2xl w-full max-w-4xl flex items-center shadow-lg">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      <div className="bg-white shadow-lg p-8 rounded-2xl w-full max-w-4xl flex items-center">
         
         {/* Left Side - Text */}
         <div className="w-1/2">
           {/* Google Logo */}
-          <div className="text-3xl text-white font-bold mb-8">
+          <div className="text-3xl font-bold mb-8">
             <span className="text-blue-500">G</span>
             <span className="text-red-500">o</span>
             <span className="text-yellow-500">o</span>
@@ -24,8 +46,8 @@ const CreatePassword = () => {
             <span className="text-red-500">e</span>
           </div>
 
-          <h1 className="text-4xl text-white font-semibold mb-4">Create a strong password</h1>
-          <p className="text-gray-400 text-base">
+          <h1 className="text-4xl text-gray-800 font-semibold mb-4">Create a strong password</h1>
+          <p className="text-gray-600 text-base">
             Create a strong password with a mixture of letters, numbers and symbols
           </p>
         </div>
@@ -35,7 +57,7 @@ const CreatePassword = () => {
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Password"
-            className="bg-transparent border border-gray-500 rounded-md p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8AB4F8]"
+            className="w-full rounded-md border border-gray-300 p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -43,15 +65,15 @@ const CreatePassword = () => {
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Confirm"
-            className="bg-transparent border border-gray-500 rounded-md p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8AB4F8]"
+            className="w-full rounded-md border border-gray-300 p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
 
-          <label className="flex items-center space-x-2 text-white text-sm">
+          <label className="flex items-center space-x-2 text-gray-700 text-sm">
             <input
               type="checkbox"
-              className="w-4 h-4 accent-[#8AB4F8]"
+              className="w-4 h-4 accent-blue-500"
               checked={showPassword}
               onChange={() => setShowPassword(!showPassword)}
             />
@@ -59,7 +81,12 @@ const CreatePassword = () => {
           </label>
 
           <div className="flex justify-end mt-4">
-            <button  onClick={()=>navigate("/PhoneVerification")} className="bg-[#8AB4F8] text-black font-medium px-8 py-2 rounded-full hover:bg-[#669df6]">
+            {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+            <button  
+              onClick={handleSubmit} 
+              className="bg-blue-500 text-white font-medium px-6 py-2 rounded-md hover:bg-blue-600 transition"
+              disabled={!password || !confirmPassword}
+            >
               Next
             </button>
           </div>
@@ -67,12 +94,12 @@ const CreatePassword = () => {
       </div>
 
       {/* Footer */}
-      <div className="absolute bottom-4 w-full flex justify-between items-center px-8 text-gray-400 text-sm">
+      <div className="absolute bottom-4 w-full flex justify-between items-center px-8 text-gray-600 text-sm">
         <div>English (United Kingdom)</div>
         <div className="space-x-4">
-          <a href="#" className="hover:underline">Help</a>
-          <a href="#" className="hover:underline">Privacy</a>
-          <a href="#" className="hover:underline">Terms</a>
+          <a href="#" className="hover:text-blue-500">Help</a>
+          <a href="#" className="hover:text-blue-500">Privacy</a>
+          <a href="#" className="hover:text-blue-500">Terms</a>
         </div>
       </div>
     </div>
